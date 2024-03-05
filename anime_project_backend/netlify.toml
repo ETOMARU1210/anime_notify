@@ -1,9 +1,0 @@
-[[redirects]]
-  from = "/api/signup"
-  to = "/.netlify/functions/signup"
-  status = 200
-
-[[redirects]]
-  from = "/api/login"
-  to = "/.netlify/functions/login"
-  status = 200
