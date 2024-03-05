@@ -80,7 +80,6 @@ const Home = () => {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, []);
 
