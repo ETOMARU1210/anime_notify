@@ -11,6 +11,10 @@ app.use(express.urlencoded(bodyParser.json()));
 app.use(express.json());
 app.use(cors());
 
+app.get("/", (req, res) => {
+  res.json({message: "apiを実行"})
+})
+
 app.post("/api/signup", async (req, res) => {
   const { username, email, password } = req.body;
 
