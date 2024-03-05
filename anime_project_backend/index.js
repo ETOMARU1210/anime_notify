@@ -11,7 +11,7 @@ app.use(express.urlencoded(bodyParser.json()));
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.json({message: "apiを実行"})
 })
 
