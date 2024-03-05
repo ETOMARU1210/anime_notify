@@ -12,7 +12,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/api", (req, res) => {
-  res.json({message: "apiを実行"})
+  return res.json({message: "apiを実行"})
 })
 
 app.post("/api/signup", async (req, res) => {
