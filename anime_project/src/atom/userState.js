@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-const { recoilPersist} = require("recoil-persist");
+import { recoilPersist } from "recoil-persist";
 
 const { persistAtom } = recoilPersist({
 	key: "user",
