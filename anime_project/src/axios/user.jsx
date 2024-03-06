@@ -2,7 +2,7 @@ import axios from "axios";
 
 class User {
   async  signup(username, email, password) {
-    return await axios.post("http://localhost:3000/api/signup", {
+    return await axios.post("https://anime-notify.onrender.com/api/signup", {
       username,
       email,
       password
@@ -13,7 +13,7 @@ class User {
   }
 
   async login(email, password) {
-    return await axios.post("http://localhost:3000/api/login", {
+    return await axios.post("https://anime-notify.onrender.com/api/login", {
       email,
       password
     }).then(
