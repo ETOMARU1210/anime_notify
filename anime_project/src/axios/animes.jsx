@@ -58,7 +58,7 @@ class Anime {
           season = "spring";
           break;
         case 7:
-        case 8 :
+        case 8:
         case 9:
           season = "summer";
           break;
@@ -68,6 +68,15 @@ class Anime {
     const anime_get_url = `https://api.annict.com/v1/works?access_token=Jonwf_V2K3IdbrLcdD0WFYMRcmWtTtdXAyT-1VSXj1Y&filter_season=${year}-${season}`;
     const response = await axios.get(anime_get_url);
     return response.data.works;
+  }
+
+  async anime_notify(user, anime) {
+    // console.log(user);
+    return await axios.post("http://localhost:3000/api/anime_notify", {user, anime}).then(response => response.data);
+  }
+
+  async anime_notify_off(user, anime) {
+    return await axios.post("http://localhost:3000/api/anime_notify_off", {user, animes: anime.title}).then(response => response.data);
   }
 }
 

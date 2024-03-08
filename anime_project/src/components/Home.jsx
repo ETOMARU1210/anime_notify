@@ -13,6 +13,7 @@ import {
   Box,
   useMediaQuery,
   useToast,
+  IconButton,
 } from "@chakra-ui/react";
 import anime from "../axios/animes";
 import { useRecoilState } from "recoil";
@@ -20,6 +21,9 @@ import animeNow from "../atom/anime_now";
 import animeBefore from "../atom/anime_before";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import userState from "../atom/userState";
+import { IoIosNotifications } from "react-icons/io";
+import { IoIosNotificationsOff } from "react-icons/io";
 
 const Home = () => {
   const [anime_now, setAnimeNow] = useRecoilState(animeNow);
@@ -30,25 +34,41 @@ const Home = () => {
   const [loadIndexBefore, setLoadIndexBefore] = useState(6);
   const [isEmptyBefore, setIsEmptyBefore] = useState(false);
   const [isMobile] = useMediaQuery("(max-width: 768px)");
+  const [userLogin, setUserLogin] = useRecoilState(userState);
   const location = useLocation();
   const toast = useToast();
 
-    // ログイン成功時にToastを表示する関数
-    const displaySuccess = (message) => {
-      toast({
-        title: message,
-        status: "success",
-        duration: 3000, // 3秒間表示されます
-        isClosable: true,
-      });
-    };
+  const notifycation = async (user, anime_notify) => {
+    const userLogin = await anime.anime_notify(user, anime_notify);
+    console.log(userLogin);
+    setUserLogin(userLogin);
+    displaySuccess("通知をONにしました");
+  };
+
+  const notifycation_off = async (user, anime_notify) => {
+    console.log(user);
+    console.log(anime_notify)
+    const userLogin = await anime.anime_notify_off(user, anime_notify);
+    console.log(userLogin);
+    setUserLogin(userLogin);
+    displaySuccess("通知をOFFにしました", "info");
+  };
+  // ログイン成功時にToastを表示する関数
+  const displaySuccess = (message, status = "success") => {
+    toast({
+      title: message,
+      status: status,
+      duration: 1500, // 3秒間表示されます
+      isClosable: true,
+    });
+  };
 
   useEffect(() => {
     if (location.state && Object.keys(location.state).length !== 0) {
       displaySuccess(location.state.success);
-      location.state = {}
+      location.state = {};
     }
-  }, [location.state])
+  }, [location.state]);
 
   const displayMoreNow = () => {
     if (loadIndexNow > anime_now.length) {
@@ -136,6 +156,45 @@ const Home = () => {
                       )}
                       <Stack mt="6" spacing="3">
                         <Heading size="md">{anime.title}</Heading>
+                        {Object.keys(userLogin).length !== 0 &&
+                          !anime.no_episodes && (
+                            <>
+                              {userLogin.animeSubscriptions.some(
+                                (subscription) =>
+                                  subscription.title === anime.title
+                              ) ? (
+                                userLogin.animeSubscriptions.find(
+                                  (subscription) =>
+                                    subscription.title === anime.title
+                                ).notificationEnabled ? (
+                                  <IconButton
+                                    icon={<IoIosNotificationsOff />}
+                                    onClick={() =>
+                                      notifycation_off(
+                                        userLogin,
+                                        anime
+                                      )
+                                    }
+                                    aria-label="アニメ通知"
+                                  />
+                                ) : (
+                                  <IconButton
+                                    icon={<IoIosNotifications />}
+                                    onClick={() =>
+                                      notifycation(userLogin, anime)
+                                    }
+                                    aria-label="アニメ通知"
+                                  />
+                                )
+                              ) : (
+                                <IconButton
+                                  icon={<IoIosNotifications />}
+                                  onClick={() => notifycation(userLogin, anime)}
+                                  aria-label="アニメ通知"
+                                />
+                              )}
+                            </>
+                          )}
                       </Stack>
                     </CardBody>
                   </Card>
@@ -242,7 +301,9 @@ const Home = () => {
           </Heading>
         </Center>
         <Center>
-          <Button colorScheme="teal" as="a" href="/signup">新規登録する</Button>
+          <Button colorScheme="teal" as="a" href="/signup">
+            新規登録する
+          </Button>
         </Center>
       </Box>
     </>
@@ -250,4 +311,3 @@ const Home = () => {
 };
 
 export default Home;
-

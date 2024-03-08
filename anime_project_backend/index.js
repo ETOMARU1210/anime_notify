@@ -3,17 +3,21 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const cors = require("cors");
+const axios = require("axios");
+const mailgun = require("mailgun-js");
+const cron = require("node-cron");
+const cheerio = require("cheerio");
 
 const prisma = new PrismaClient();
+
+// APIのURL
+const API_SHOBOCAL_URL = "https://cal.shoboi.jp/";
+ANILIST_API_KEY = "f44F4iuJ5MEiAhQSpScW16v33fXH7oIVS5dVh2cT";
 
 const app = express();
 app.use(express.urlencoded(bodyParser.json()));
 app.use(express.json());
 app.use(cors());
-
-app.get("/api", (req, res) => {
-  return res.json({message: "apiを実行"})
-})
 
 app.post("/api/signup", async (req, res) => {
   const { username, email, password } = req.body;
@@ -50,6 +54,7 @@ app.post("/api/signup", async (req, res) => {
 
     // 新しいユーザーを作成
     const newUser = await prisma.user.create({
+      include: { animeSubscriptions: true },
       data: {
         username,
         email,
@@ -75,6 +80,7 @@ app.post("/api/login", async (req, res) => {
       where: {
         email,
       },
+      include: { animeSubscriptions: true },
     });
 
     // ユーザーが存在しない場合
@@ -101,6 +107,71 @@ app.post("/api/login", async (req, res) => {
     console.error("ログインエラー:", error);
     res.status(500).json({ error: "サーバーエラーが発生しました" });
   }
+});
+
+app.post("/api/anime_notify", async (req, res) => {
+  const userId = Number(req.body.user.id);
+  const title = req.body.anime.title;
+  const syobocal_tid = Number(req.body.anime.syobocal_tid);
+
+  const existingSubscription = await prisma.user.findFirst({
+    where: { id: userId, animeSubscriptions: { some: { title: title } } },
+  });
+
+  if (existingSubscription) {
+    const anime_update = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        animeSubscriptions: {
+          updateMany: {
+            where: { title: title },
+            data: {
+              notificationEnabled: true,
+            },
+          },
+        },
+      },
+      include: { animeSubscriptions: true },
+    });
+    console.log(anime_update);
+    return res.json(anime_update);
+  }
+
+  // 購読が存在しない場合、新しい購読を作成する
+  const newSubscription = await prisma.animeSubscription.create({
+    data: {
+      title: title,
+      userId: userId,
+      syobocal_tid: Number(syobocal_tid),
+      notificationEnabled: true,
+    },
+  });
+
+  const user = await prisma.user.findFirst({
+    where: { id: userId },
+    include: { animeSubscriptions: true },
+  });
+
+  return res.json(user);
+});
+
+app.post("/api/anime_notify_off", async (req, res) => {
+  console.log(req.body);
+  const userId = Number(req.body.user.id);
+  const title = req.body.animes.title;
+  const anime_off = await prisma.animeSubscription.updateMany({
+    where: { userId: userId, title: title },
+    data: {
+      notificationEnabled: false,
+    },
+  });
+
+  const user = await prisma.user.findFirst({
+    where: { id: userId },
+    include: { animeSubscriptions: true },
+  });
+
+  return res.json(user);
 });
 
 const port = process.env.PORT || 3000;

@@ -13,9 +13,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Userモデル
 model User {
-  id Int @id @default(autoincrement())
-  username String @unique
-  email String @unique
-  password String
+  id                 Int                 @id @default(autoincrement())
+  username           String              @unique
+  email              String              @unique
+  password           String
+  animeSubscriptions AnimeSubscription[]
+}
+
+// Userが購読しているアニメの関連モデル
+model AnimeSubscription {
+  id          Int    @id @default(autoincrement())
+  title       String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  syobocal_tid Int
+  notificationEnabled Boolean @default(false)
 }
