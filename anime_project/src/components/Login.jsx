@@ -41,8 +41,6 @@ const Login = () => {
       getValues("email"),
       getValues("password")
     );
-    console.log(userLogin);
-    console.log(userLogin.hasOwnProperty("error"))
     if (userLogin.hasOwnProperty("error")) {
       displayError(userLogin.error);
     } else {
