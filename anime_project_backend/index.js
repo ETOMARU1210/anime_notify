@@ -3,15 +3,16 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const cors = require("cors");
-const schedule = require("node-schedule");
-const { default: axios } = require("axios");
+const axios = require("axios");
 const mailgun = require("mailgun-js");
 const cron = require("node-cron");
+const cheerio = require("cheerio");
 
 const prisma = new PrismaClient();
 
 // APIのURL
-const API_SHOBOCAL_URL = "https://api.syobocal.com/v2/";
+const API_SHOBOCAL_URL = "https://cal.shoboi.jp/";
+ANILIST_API_KEY = "f44F4iuJ5MEiAhQSpScW16v33fXH7oIVS5dVh2cT";
 
 const app = express();
 app.use(express.urlencoded(bodyParser.json()));
