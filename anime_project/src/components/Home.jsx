@@ -14,6 +14,9 @@ import {
   useMediaQuery,
   useToast,
   IconButton,
+  Select,
+  Flex,
+  HStack,
 } from "@chakra-ui/react";
 import anime from "../axios/animes";
 import { useRecoilState } from "recoil";
@@ -38,6 +41,17 @@ const Home = () => {
   const location = useLocation();
   const toast = useToast();
 
+  const years = [];
+
+  for (let date = new Date().getFullYear() - 1; date >= 1900; date--) {
+    years.push(date);
+  }
+
+  const [year, setYear] = useState(new Date().getFullYear() - 1);
+
+  const springs = ["spring", "summer", "autumn", "winter"];
+  const [spring, setSpring] = useState("spring");
+
   const notifycation = async (user, anime_notify) => {
     const userLogin = await anime.anime_notify(user, anime_notify);
     console.log(userLogin);
@@ -47,7 +61,7 @@ const Home = () => {
 
   const notifycation_off = async (user, anime_notify) => {
     console.log(user);
-    console.log(anime_notify)
+    console.log(anime_notify);
     const userLogin = await anime.anime_notify_off(user, anime_notify);
     console.log(userLogin);
     setUserLogin(userLogin);
@@ -90,7 +104,7 @@ const Home = () => {
     const fetchData = async () => {
       try {
         const nowData = await anime.anime_now_term_all();
-        const beforeData = await anime.anime_before_term_all();
+        const beforeData = await anime.anime_before_term_all(year, spring);
 
         console.log(nowData);
 
@@ -98,12 +112,11 @@ const Home = () => {
         setAnimeBefore(beforeData);
         setIsLoading(false);
       } catch (error) {
-        console.error("データの取得中にエラーが発生しました:", error);
         setIsLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [year, spring]);
 
   return (
     <>
@@ -172,10 +185,7 @@ const Home = () => {
                                   <IconButton
                                     icon={<IoIosNotificationsOff />}
                                     onClick={() =>
-                                      notifycation_off(
-                                        userLogin,
-                                        anime
-                                      )
+                                      notifycation_off(userLogin, anime)
                                     }
                                     aria-label="アニメ通知"
                                   />
@@ -224,6 +234,70 @@ const Home = () => {
             前期のアニメ
           </Heading>
         </Center>
+        {isMobile ? (
+          <>
+            <Select
+              placeholder="年度"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+            >
+              {years.map((year) => (
+                <option key={year} value={year}>
+                  {year}
+                </option>
+              ))}
+            </Select>
+            <Select
+              placeholder="季節"
+              value={spring}
+              onChange={(e) => setSpring(e.target.value)}
+            >
+              {springs.map((spring) => (
+                <option key={spring} value={spring}>
+                  {spring}
+                </option>
+              ))}
+            </Select>
+          </>
+        ) : (
+          <Center>
+
+          <HStack spacing="24px"
+          >
+              <Select
+               w="100px"
+                placeholder="年度"
+                value={year}
+                onChange={(e) => {
+                  setYear(e.target.value)
+                  setIsLoading(true);
+                }}
+                style={{ marginRight: "10px" }}
+              >
+                {years.map((year) => (
+                  <option key={year} value={year}>
+                    {year}
+                  </option>
+                ))}
+              </Select>
+              <Select
+               w="100px"
+                placeholder="季節"
+                value={spring}
+                onChange={(e) => {
+                  setSpring(e.target.value)
+                  setIsLoading(true);
+                }}
+              >
+                {springs.map((spring) => (
+                  <option key={spring} value={spring}>
+                    {spring}
+                  </option>
+                ))}
+              </Select>
+          </HStack>
+          </Center>
+        )}
         {isLoading ? (
           <Center>
             <Spinner size="xl" />
@@ -238,7 +312,7 @@ const Home = () => {
             gap={{ base: 3, sm: 5 }}
             templateRows="repeat(auto-fill, minmax(100px, auto))"
           >
-            {anime_before.length > 0 &&
+            {anime_before && Object.keys(anime_before).length > 0 &&
               anime_before.slice(0, loadIndexBefore).map((anime) => (
                 <GridItem key={anime.id}>
                   <Card h="100%">
@@ -298,14 +372,17 @@ const Home = () => {
             lineHeight="tall"
             mb={{ base: 3, sm: 3, lg: 5 }}
           >
-            アニメを見逃したり、アニメがやったのか確認するのが面倒なことがある。
-            だからこそ、アニメ通知をして面倒を減らして、楽しもう
+            どんなアニメがいままでやってきたか確認したいときがあると思う            
+            このアプリで年度と季節で検索して調べよう
+            いずれ通知もできるようにするよ
           </Heading>
         </Center>
         <Center>
+          {Object.keys(userLogin).length === 0 && (
           <Button colorScheme="teal" as="a" href="/signup">
             新規登録する
           </Button>
+          )}
         </Center>
       </Box>
     </>
