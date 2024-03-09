@@ -7,12 +7,11 @@ const axios = require("axios");
 const mailgun = require("mailgun-js");
 const cron = require("node-cron");
 const cheerio = require("cheerio");
+const { parseStringPromise } = require("xml2js"); // xml2jsを使ってXMLを解析する
+const Parser = require("rss-parser");
+const parser = new Parser();
 
 const prisma = new PrismaClient();
-
-// APIのURL
-const API_SHOBOCAL_URL = "https://cal.shoboi.jp/";
-ANILIST_API_KEY = "f44F4iuJ5MEiAhQSpScW16v33fXH7oIVS5dVh2cT";
 
 const app = express();
 app.use(express.urlencoded(bodyParser.json()));

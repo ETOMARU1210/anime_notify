@@ -53,12 +53,12 @@ const Home = () => {
     setUserLogin(userLogin);
     displaySuccess("通知をOFFにしました", "info");
   };
-  // ログイン成功時にToastを表示する関数
+  // Toastを表示する関数
   const displaySuccess = (message, status = "success") => {
     toast({
       title: message,
       status: status,
-      duration: 1500, // 3秒間表示されます
+      duration: 1500,
       isClosable: true,
     });
   };
@@ -91,6 +91,8 @@ const Home = () => {
       try {
         const nowData = await anime.anime_now_term_all();
         const beforeData = await anime.anime_before_term_all();
+
+        console.log(nowData);
 
         setAnimeNow(nowData);
         setAnimeBefore(beforeData);
