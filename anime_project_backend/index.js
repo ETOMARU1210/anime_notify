@@ -8,8 +8,6 @@ const mailgun = require("mailgun-js");
 const cron = require("node-cron");
 const cheerio = require("cheerio");
 const { parseStringPromise } = require("xml2js"); // xml2jsを使ってXMLを解析する
-const Parser = require("rss-parser");
-const parser = new Parser();
 
 const prisma = new PrismaClient();
 
