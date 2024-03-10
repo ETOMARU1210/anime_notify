@@ -2,7 +2,7 @@ import axios from "axios";
 
 class User {
   
-  API_URL ="http://localhost:3000";
+  API_URL ="https://anime-notify.onrender.com";
   async signup(username, email, password) {
     return await axios
       .post(`${this.API_URL}/api/signup`, {

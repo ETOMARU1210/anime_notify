@@ -3,11 +3,6 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const cors = require("cors");
-const axios = require("axios");
-const mailgun = require("mailgun-js");
-const cron = require("node-cron");
-const cheerio = require("cheerio");
-const { parseStringPromise } = require("xml2js"); // xml2jsを使ってXMLを解析する
 
 const prisma = new PrismaClient();
 
@@ -109,7 +104,7 @@ app.post("/api/login", async (req, res) => {
 app.post("/api/anime_notify", async (req, res) => {
   const userId = Number(req.body.user.id);
   const title = req.body.anime.title;
-  const syobocal_tid = Number(req.body.anime.syobocal_tid);
+  const mal_anime_id = Number(req.body.anime.mal_anime_id);
 
   const existingSubscription = await prisma.user.findFirst({
     where: { id: userId, animeSubscriptions: { some: { title: title } } },
@@ -139,7 +134,7 @@ app.post("/api/anime_notify", async (req, res) => {
     data: {
       title: title,
       userId: userId,
-      syobocal_tid: Number(syobocal_tid),
+      syobocal_tid: Number(mal_anime_id),
       notificationEnabled: true,
     },
   });

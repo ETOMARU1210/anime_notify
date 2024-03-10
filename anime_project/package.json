@@ -1,7 +1,7 @@
 {
   "name": "anime_project",
   "private": true,
-  "proxy": "https://anime-notify.onrender.com ",
+  "proxy": "https://anime-notify.onrender.com",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
