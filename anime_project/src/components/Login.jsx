@@ -14,7 +14,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import userState from "../atom/userState";
-import { useLocation, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import user from "../axios/user";
 
@@ -24,7 +24,6 @@ const Login = () => {
   const [, setUserLogin] = useRecoilState(userState);
   const [password, setPassword] = useState(false);
   const toast = useToast();
-  const location = useLocation();
 
   // ログイン失敗時にToastを表示する関数
   const displayError = (message) => {
