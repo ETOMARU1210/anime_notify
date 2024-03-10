@@ -1,6 +1,7 @@
 import axios from "axios";
 
 class Anime {
+  API_URL ="https://anime-notify.onrender.com";
   async anime_now_term_all() {
     const date = new Date();
     const month = date.getMonth();
@@ -85,13 +86,13 @@ class Anime {
   async anime_notify(user, anime) {
     // console.log(user);
     return await axios
-      .post("http://localhost:3000/api/anime_notify", { user, anime })
+      .post(`${this.API_URL}/api/anime_notify`, { user, anime })
       .then((response) => response.data);
   }
 
   async anime_notify_off(user, anime) {
     return await axios
-      .post("http://localhost:3000/api/anime_notify_off", {
+      .post(`${this.API_URL}/api/anime_notify_off`, {
         user,
         animes: anime.title,
       })
