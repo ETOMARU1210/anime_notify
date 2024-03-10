@@ -43,7 +43,7 @@ const Home = () => {
 
   const years = [];
 
-  for (let date = new Date().getFullYear() - 1; date >= 1900; date--) {
+  for (let date = new Date().getFullYear(); date >= 1900; date--) {
     years.push(date);
   }
 
