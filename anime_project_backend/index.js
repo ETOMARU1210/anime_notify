@@ -84,8 +84,6 @@ app.use(cors());
     }
   };
 
-  checkAnimeBroadcastDayAndNotify();
-
  // 毎日0時に実行するタスクをスケジュール
 cron.schedule('0 0 * * *', () => {
   checkAnimeBroadcastDayAndNotify();
