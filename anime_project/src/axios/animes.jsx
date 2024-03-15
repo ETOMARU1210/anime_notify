@@ -1,7 +1,7 @@
 import axios from "axios";
 
 class Anime {
-  API_URL ="https://anime-notify.onrender.com";
+  API_URL = "https://anime-notify.onrender.com";
   async anime_now_term_all() {
     const date = new Date();
     const month = date.getMonth();
@@ -28,9 +28,26 @@ class Anime {
       case 12:
         season = "autumn";
     }
-    const anime_get_url = `https://api.annict.com/v1/works?access_token=Jonwf_V2K3IdbrLcdD0WFYMRcmWtTtdXAyT-1VSXj1Y&filter_season=${year}-${season}`;
-    const animes = await axios.get(anime_get_url);
-    return animes.data.works;
+
+    const works = [];
+    let page = 1;
+    const per_page = 50;
+    let hasNextPage = true;
+
+    while (hasNextPage) {
+      const anime_url = `https://api.annict.com/v1/works?access_token=Jonwf_V2K3IdbrLcdD0WFYMRcmWtTtdXAyT-1VSXj1Y&filter_season=${year}-${season}&page=${page}&per_page=${per_page}`;
+      const animes = await axios
+        .get(anime_url)
+        .then((response) => response.data.works);
+      if (animes.length > 0) {
+        works.push(...animes);
+        page++;
+      } else {
+        hasNextPage = false;
+      }
+    }
+    console.log(works);
+    return works;
   }
 
   // async anime_before_term_all() {
@@ -72,16 +89,36 @@ class Anime {
   // }
 
   async anime_before_term_all(year, season) {
-    console.log(year);
-    console.log(season);
     if (year !== "" && season !== "") {
-      const anime_get_url = `https://api.annict.com/v1/works?access_token=Jonwf_V2K3IdbrLcdD0WFYMRcmWtTtdXAyT-1VSXj1Y&filter_season=${year}-${season}`;
-      return await axios
-        .get(anime_get_url)
-        .then((response) => response.data.works)
-        .catch((e) => {});
+      const works = [];
+      let page = 1;
+      const per_page = 50;
+      let hasNextPage = true;
+
+      while (hasNextPage) {
+        const animeGetUrl = `https://api.annict.com/v1/works?access_token=Jonwf_V2K3IdbrLcdD0WFYMRcmWtTtdXAyT-1VSXj1Y&filter_season=${year}-${season}&page=${page}&per_page=${per_page}`;
+        try {
+          const response = await axios.get(animeGetUrl);
+          const animes = response.data.works;
+          if (animes.length > 0) {
+            works.push(...animes);
+            page++;
+          } else {
+            hasNextPage = false;
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+          hasNextPage = false;
+        }
+      }
+
+      console.log(works);
+      return works;
+    } else {
+      console.log("Year and season must be specified.");
+      return [];
     }
-}
+  }
 
   async anime_notify(user, anime) {
     // console.log(user);

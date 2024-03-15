@@ -14,7 +14,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import userState from "../atom/userState";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import user from "../axios/user";
 
