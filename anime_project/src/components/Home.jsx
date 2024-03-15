@@ -183,6 +183,7 @@ const Home = () => {
                                     subscription.title === anime.title
                                 ).notificationEnabled ? (
                                   <IconButton
+                                    colorScheme="red"
                                     icon={<IoIosNotificationsOff />}
                                     onClick={() =>
                                       notifycation_off(userLogin, anime)
@@ -191,6 +192,7 @@ const Home = () => {
                                   />
                                 ) : (
                                   <IconButton
+                                    colorScheme="blue"
                                     icon={<IoIosNotifications />}
                                     onClick={() =>
                                       notifycation(userLogin, anime)
@@ -200,6 +202,7 @@ const Home = () => {
                                 )
                               ) : (
                                 <IconButton
+                                  colorScheme="blue"
                                   icon={<IoIosNotifications />}
                                   onClick={() => notifycation(userLogin, anime)}
                                   aria-label="アニメ通知"
@@ -261,15 +264,13 @@ const Home = () => {
           </>
         ) : (
           <Center>
-
-          <HStack spacing="24px"
-          >
+            <HStack spacing="24px">
               <Select
-               w="100px"
+                w="100px"
                 placeholder="年度"
                 value={year}
                 onChange={(e) => {
-                  setYear(e.target.value)
+                  setYear(e.target.value);
                   setIsLoading(true);
                 }}
                 style={{ marginRight: "10px" }}
@@ -281,11 +282,11 @@ const Home = () => {
                 ))}
               </Select>
               <Select
-               w="100px"
+                w="100px"
                 placeholder="季節"
                 value={spring}
                 onChange={(e) => {
-                  setSpring(e.target.value)
+                  setSpring(e.target.value);
                   setIsLoading(true);
                 }}
               >
@@ -295,7 +296,7 @@ const Home = () => {
                   </option>
                 ))}
               </Select>
-          </HStack>
+            </HStack>
           </Center>
         )}
         {isLoading ? (
@@ -312,7 +313,8 @@ const Home = () => {
             gap={{ base: 3, sm: 5 }}
             templateRows="repeat(auto-fill, minmax(100px, auto))"
           >
-            {anime_before && Object.keys(anime_before).length > 0 &&
+            {anime_before &&
+              Object.keys(anime_before).length > 0 &&
               anime_before.slice(0, loadIndexBefore).map((anime) => (
                 <GridItem key={anime.id}>
                   <Card h="100%">
@@ -372,16 +374,16 @@ const Home = () => {
             lineHeight="tall"
             mb={{ base: 3, sm: 3, lg: 5 }}
           >
-            どんなアニメがいままでやってきたか確認したいときがあると思う            
+            どんなアニメがいままでやってきたか確認したいときがあると思う
             このアプリで年度と季節で検索して調べよう
             いずれ通知もできるようにするよ
           </Heading>
         </Center>
         <Center>
           {Object.keys(userLogin).length === 0 && (
-          <Button colorScheme="teal" as="a" href="/signup">
-            新規登録する
-          </Button>
+            <Button colorScheme="teal" as="a" href="/signup">
+              新規登録する
+            </Button>
           )}
         </Center>
       </Box>
