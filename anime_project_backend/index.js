@@ -61,6 +61,7 @@ app.use(cors());
         // アニメの放送曜日を確認
         if (
           anime_get.broadcast &&
+          anime_get.broadcast.day_of_the_week &&
           anime_get.broadcast.day_of_the_week === dayOfWeek
           && anime.notificationEnabled
         ) {
