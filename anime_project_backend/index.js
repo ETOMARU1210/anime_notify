@@ -3,6 +3,9 @@ const bodyParser = require("body-parser");
 const bcrypt = require("bcrypt");
 const { PrismaClient } = require("@prisma/client");
 const cors = require("cors");
+const axios = require("axios");
+const nodemailer = require("nodemailer");
+const cron = require('node-cron');
 
 const prisma = new PrismaClient();
 
@@ -10,6 +13,84 @@ const app = express();
 app.use(express.urlencoded(bodyParser.json()));
 app.use(express.json());
 app.use(cors());
+
+  // メール送信の設定
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    auth: {
+      user: process.env.GMAILUSER, // メールサーバーのユーザー名
+      pass:  process.env.GMAILPASSWORD, // メールサーバーのパスワード
+    },
+  });
+
+  const checkAnimeBroadcastDayAndNotify = async () => {
+    // すべてのユーザーを取得
+    const users = await prisma.user.findMany();
+  
+    for (const user of users) {
+      // 特定のユーザーのアニメサブスクリプションを取得
+      const animes = await prisma.animeSubscription.findMany({
+        where: { userId: user.id },
+      });
+  
+      for (const anime of animes) {
+        const anime_get = await axios
+          .get(`https://api.myanimelist.net/v2/anime/${anime.syobocal_tid}`, {
+            headers: {
+              "X-MAL-CLIENT-ID": process.env.MAL_CLIENT_ID,
+            },
+            params: {
+              fields: "title, start_date, end_date, num_episodes, broadcast",
+            },
+          })
+          .then((response) => response.data);
+  
+        const weekdays = [
+          "sunday",
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+          "saturday",
+        ];
+        const today = new Date();
+        const dayOfWeek = weekdays[today.getDay()];
+  
+        // アニメの放送曜日を確認
+        if (
+          anime_get.broadcast &&
+          anime_get.broadcast.day_of_the_week === dayOfWeek
+          && anime.notificationEnabled
+        ) {
+          // メールを送信
+          await transporter.sendMail({
+            from: '"アニメ通知サービス" <inori0218adt@gmail.com>',
+            to: user.email, // ユーザーのメールアドレス
+            subject: `今日のアニメ放送：${anime.title}`,
+            text: `${anime.title}の放送日です！お見逃しなく！`,
+            html: `
+              <div style="font-family: Arial, sans-serif; color: #333;">
+                <h2 style="color: #0056b3;">${anime.title}の放送日です！</h2>
+                <p>本日は<span style="font-weight:bold;">${anime.title}</span>の放送日です。お見逃しなく！</p>
+                <p>放送時間 : ${anime_get.broadcast.start_time}</p>
+                <p>詳細については、公式サイトをご確認ください。</p>
+              </div>
+            `,
+          });
+        }
+      }
+    }
+  };
+
+ // 毎日0時に実行するタスクをスケジュール
+cron.schedule('0 0 * * *', () => {
+  checkAnimeBroadcastDayAndNotify();
+}, {
+  scheduled: true,
+  timezone: "Asia/Tokyo" // 日本のタイムゾーンを指定
+});
 
 app.post("/api/signup", async (req, res) => {
   const { username, email, password } = req.body;
