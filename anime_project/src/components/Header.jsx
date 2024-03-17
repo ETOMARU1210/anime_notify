@@ -11,8 +11,9 @@ import {
   IconButton,
   useMediaQuery,
   ButtonGroup,
+  Icon,
 } from "@chakra-ui/react";
-import { HamburgerIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, SearchIcon } from "@chakra-ui/icons";
 import { useRecoilState, useResetRecoilState } from "recoil";
 import userState from "../atom/userState";
 import { useNavigate } from "react-router-dom";
@@ -42,12 +43,16 @@ const Header = () => {
             Anication
           </Heading>
         </Box>
+        <Box p="2">
+          <Heading size="sm" as="a" href="/search">
+            <Icon as={SearchIcon} />
+            検索
+          </Heading>
+        </Box>
         <Spacer />
         <Box p="2">
           {Object.keys(userLogin).length !== 0 && (
-            <Heading size="md">
-              {userLogin.username}さん
-            </Heading>
+            <Heading size="md">{userLogin.username}さん</Heading>
           )}
         </Box>
         <Spacer />

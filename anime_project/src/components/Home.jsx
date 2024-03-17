@@ -2,8 +2,6 @@ import {
   Card,
   CardBody,
   Center,
-  Grid,
-  GridItem,
   Heading,
   Spinner,
   Image,
@@ -15,7 +13,6 @@ import {
   useToast,
   IconButton,
   Select,
-  Flex,
   HStack,
 } from "@chakra-ui/react";
 import anime from "../axios/animes";
@@ -47,10 +44,6 @@ const Home = () => {
   const [anime_now, setAnimeNow] = useRecoilState(animeNow);
   const [anime_before, setAnimeBefore] = useRecoilState(animeBefore);
   const [isLoading, setIsLoading] = useState(true);
-  const [loadIndexNow, setLoadIndexNow] = useState(6);
-  const [isEmptyNow, setIsEmptyNow] = useState(false);
-  const [loadIndexBefore, setLoadIndexBefore] = useState(6);
-  const [isEmptyBefore, setIsEmptyBefore] = useState(false);
   const [isMobile] = useMediaQuery("(max-width: 768px)");
   const [userLogin, setUserLogin] = useRecoilState(userState);
   const location = useLocation();
@@ -69,16 +62,12 @@ const Home = () => {
 
   const notifycation = async (user, anime_notify) => {
     const userLogin = await anime.anime_notify(user, anime_notify);
-    console.log(userLogin);
     setUserLogin(userLogin);
     displaySuccess("通知をONにしました");
   };
 
   const notifycation_off = async (user, anime_notify) => {
-    console.log(user);
-    console.log(anime_notify);
     const userLogin = await anime.anime_notify_off(user, anime_notify);
-    console.log(userLogin);
     setUserLogin(userLogin);
     displaySuccess("通知をOFFにしました", "info");
   };
@@ -97,15 +86,13 @@ const Home = () => {
       displaySuccess(location.state.success);
       location.state = {};
     }
-  }, [location.state]);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const nowData = await anime.anime_now_term_all();
         const beforeData = await anime.anime_before_term_all(year, spring);
-
-        console.log(nowData);
 
         setAnimeNow(nowData);
         setAnimeBefore(beforeData);
@@ -223,8 +210,6 @@ const Home = () => {
               ))}
           </Swiper>
         )}
-        <Center>
-        </Center>
       </VStack>
       <VStack spacing={4} align="stretch">
         <Center>
