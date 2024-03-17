@@ -28,6 +28,21 @@ import userState from "../atom/userState";
 import { IoIosNotifications } from "react-icons/io";
 import { IoIosNotificationsOff } from "react-icons/io";
 
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import "swiper/css";
+import "swiper/css/a11y";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
+import {
+  Navigation,
+  Pagination,
+  Scrollbar,
+  A11y,
+  Autoplay,
+} from "swiper/modules";
+
 const Home = () => {
   const [anime_now, setAnimeNow] = useRecoilState(animeNow);
   const [anime_before, setAnimeBefore] = useRecoilState(animeBefore);
@@ -84,22 +99,6 @@ const Home = () => {
     }
   }, [location.state]);
 
-  const displayMoreNow = () => {
-    if (loadIndexNow > anime_now.length) {
-      setIsEmptyNow(true);
-    } else {
-      setLoadIndexNow(loadIndexNow + 6);
-    }
-  };
-
-  const displayMoreBefore = () => {
-    if (loadIndexBefore > anime_before.length) {
-      setIsEmptyBefore(true);
-    } else {
-      setLoadIndexBefore(loadIndexBefore + 6);
-    }
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -131,18 +130,25 @@ const Home = () => {
             <Spinner size="xl" />
           </Center>
         ) : (
-          <Grid
-            templateColumns={{
-              base: "repeat(1, 1fr)",
-              md: "repeat(3, 1fr)",
-              lg: "repeat(6, 1fr)",
+          <Swiper
+            modules={[Navigation, Pagination, Autoplay, Scrollbar, A11y]}
+            slidesPerView={1}
+            style={{maxWidth: "100%"}}
+            loop={true}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: false,
             }}
-            gap={{ base: 3, sm: 5 }}
-            templateRows="repeat(auto-fill, minmax(100px, auto))"
+            breakpoints={{
+              // 768px以上の場合
+              768: {
+                slidesPerView: 6, // PC版ではスライドを3つ表示
+              },
+            }}
           >
             {anime_now.length > 0 &&
-              anime_now.slice(0, loadIndexNow).map((anime) => (
-                <GridItem key={anime.id}>
+              anime_now.map((anime) => (
+                <SwiperSlide key={anime.id}>
                   <Card h="100%">
                     <CardBody
                       style={{
@@ -213,24 +219,13 @@ const Home = () => {
                       </Stack>
                     </CardBody>
                   </Card>
-                </GridItem>
+                </SwiperSlide>
               ))}
-          </Grid>
+          </Swiper>
         )}
         <Center>
-          {!isEmptyNow && (
-            <Button
-              disabled={isEmptyNow}
-              onClick={displayMoreNow}
-              colorScheme="red"
-              mb={3}
-            >
-              さらに表示
-            </Button>
-          )}
         </Center>
       </VStack>
-
       <VStack spacing={4} align="stretch">
         <Center>
           <Heading as="h4" size="md" lineHeight="tall" mb={6} mt={6}>
@@ -304,19 +299,27 @@ const Home = () => {
             <Spinner size="xl" />
           </Center>
         ) : (
-          <Grid
-            templateColumns={{
-              base: "repeat(1, 1fr)",
-              md: "repeat(3, 1fr)",
-              lg: "repeat(6, 1fr)",
-            }}
-            gap={{ base: 3, sm: 5 }}
-            templateRows="repeat(auto-fill, minmax(100px, auto))"
+          <Swiper
+          modules={[Navigation, Pagination, Autoplay, Scrollbar, A11y]}
+          spaceBetween={20}
+          slidesPerView={1}
+          style={{maxWidth: "100%"}}
+          loop={true}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
+          breakpoints={{
+            // 768px以上の場合
+            768: {
+              slidesPerView: 6, // PC版ではスライドを3つ表示
+            },
+          }}
           >
             {anime_before &&
               Object.keys(anime_before).length > 0 &&
-              anime_before.slice(0, loadIndexBefore).map((anime) => (
-                <GridItem key={anime.id}>
+              anime_before.map((anime) => (
+                <SwiperSlide key={anime.id}>
                   <Card h="100%">
                     <CardBody
                       style={{
@@ -348,24 +351,13 @@ const Home = () => {
                       </Stack>
                     </CardBody>
                   </Card>
-                </GridItem>
+                </SwiperSlide>
               ))}
-          </Grid>
+          </Swiper>
         )}
         <Center>
-          {!isEmptyBefore && (
-            <Button
-              disabled={isEmptyBefore}
-              onClick={displayMoreBefore}
-              colorScheme="red"
-              mb={3}
-            >
-              さらに表示
-            </Button>
-          )}
         </Center>
       </VStack>
-
       <Box mb={6} mt={6}>
         <Center>
           <Heading
