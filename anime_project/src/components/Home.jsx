@@ -14,6 +14,8 @@ import {
   IconButton,
   Select,
   HStack,
+  Link,
+  LinkBox,
 } from "@chakra-ui/react";
 import anime from "../axios/animes";
 import { useRecoilState } from "recoil";
@@ -120,7 +122,7 @@ const Home = () => {
           <Swiper
             modules={[Navigation, Pagination, Autoplay, Scrollbar, A11y]}
             slidesPerView={1}
-            style={{maxWidth: "100%"}}
+            style={{ maxWidth: "100%" }}
             loop={true}
             autoplay={{
               delay: 2500,
@@ -144,55 +146,48 @@ const Home = () => {
                         height: "100%",
                       }}
                     >
-                      {anime.images.facebook.og_image_url ? (
-                        <Image
-                          src={anime.images.facebook.og_image_url}
-                          style={{
-                            flex: "1",
-                            minHeight: "100px",
-                            objectFit: "cover",
-                          }}
-                        />
-                      ) : (
-                        <div
-                          style={{
-                            flex: "1",
-                            backgroundColor: "#f0f0f0",
-                            minHeight: "100px",
-                          }}
-                        />
-                      )}
-                      <Stack mt="6" spacing="3">
-                        <Heading size="md">{anime.title}</Heading>
-                        {Object.keys(userLogin).length !== 0 &&
-                          !anime.no_episodes && (
-                            <>
-                              {userLogin.animeSubscriptions.some(
+                      <Link href={anime.official_site_url} isExternal _hover={{textDecoration: "none"}}>
+                        {anime.images.facebook.og_image_url ? (
+                          <Image
+                            src={anime.images.facebook.og_image_url}
+                            style={{
+                              flex: "1",
+                              minHeight: "100px",
+                              objectFit: "cover",
+                            }}
+                          />
+                        ) : (
+                          <div
+                            style={{
+                              flex: "1",
+                              backgroundColor: "#f0f0f0",
+                              minHeight: "100px",
+                            }}
+                          />
+                        )}
+                        <Stack mt="6" spacing="3">
+                          <Heading size="md">{anime.title}</Heading>
+                        </Stack>
+                      </Link>
+                      {Object.keys(userLogin).length !== 0 &&
+                        !anime.no_episodes && (
+                          <>
+                            {userLogin.animeSubscriptions.some(
+                              (subscription) =>
+                                subscription.title === anime.title
+                            ) ? (
+                              userLogin.animeSubscriptions.find(
                                 (subscription) =>
                                   subscription.title === anime.title
-                              ) ? (
-                                userLogin.animeSubscriptions.find(
-                                  (subscription) =>
-                                    subscription.title === anime.title
-                                ).notificationEnabled ? (
-                                  <IconButton
-                                    colorScheme="red"
-                                    icon={<IoIosNotificationsOff />}
-                                    onClick={() =>
-                                      notifycation_off(userLogin, anime)
-                                    }
-                                    aria-label="アニメ通知"
-                                  />
-                                ) : (
-                                  <IconButton
-                                    colorScheme="blue"
-                                    icon={<IoIosNotifications />}
-                                    onClick={() =>
-                                      notifycation(userLogin, anime)
-                                    }
-                                    aria-label="アニメ通知"
-                                  />
-                                )
+                              ).notificationEnabled ? (
+                                <IconButton
+                                  colorScheme="red"
+                                  icon={<IoIosNotificationsOff />}
+                                  onClick={() =>
+                                    notifycation_off(userLogin, anime)
+                                  }
+                                  aria-label="アニメ通知"
+                                />
                               ) : (
                                 <IconButton
                                   colorScheme="blue"
@@ -200,10 +195,17 @@ const Home = () => {
                                   onClick={() => notifycation(userLogin, anime)}
                                   aria-label="アニメ通知"
                                 />
-                              )}
-                            </>
-                          )}
-                      </Stack>
+                              )
+                            ) : (
+                              <IconButton
+                                colorScheme="blue"
+                                icon={<IoIosNotifications />}
+                                onClick={() => notifycation(userLogin, anime)}
+                                aria-label="アニメ通知"
+                              />
+                            )}
+                          </>
+                        )}
                     </CardBody>
                   </Card>
                 </SwiperSlide>
@@ -285,21 +287,21 @@ const Home = () => {
           </Center>
         ) : (
           <Swiper
-          modules={[Navigation, Pagination, Autoplay, Scrollbar, A11y]}
-          spaceBetween={20}
-          slidesPerView={1}
-          style={{maxWidth: "100%"}}
-          loop={true}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: false,
-          }}
-          breakpoints={{
-            // 768px以上の場合
-            768: {
-              slidesPerView: 6, // PC版ではスライドを3つ表示
-            },
-          }}
+            modules={[Navigation, Pagination, Autoplay, Scrollbar, A11y]}
+            spaceBetween={20}
+            slidesPerView={1}
+            style={{ maxWidth: "100%" }}
+            loop={true}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: false,
+            }}
+            breakpoints={{
+              // 768px以上の場合
+              768: {
+                slidesPerView: 6, // PC版ではスライドを3つ表示
+              },
+            }}
           >
             {anime_before &&
               Object.keys(anime_before).length > 0 &&
@@ -340,8 +342,7 @@ const Home = () => {
               ))}
           </Swiper>
         )}
-        <Center>
-        </Center>
+        <Center></Center>
       </VStack>
       <Box mb={6} mt={6}>
         <Center>
