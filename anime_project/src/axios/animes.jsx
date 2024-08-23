@@ -1,7 +1,7 @@
 import axios from "axios";
 
 class Anime {
-  API_URL = "https://anime-notify.onrender.com";
+  API_URL = "https://anime-notify-backend.onrender.com/";
   async anime_now_term_all() {
     const date = new Date();
     const month = date.getMonth();
